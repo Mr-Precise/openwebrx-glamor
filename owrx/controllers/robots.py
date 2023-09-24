@@ -6,11 +6,7 @@ class RobotsController(Controller):
         # search engines should not be crawling internal / API routes
         self.send_response(
             """User-agent: *
-Disallow: /login
-Disallow: /logout
-Disallow: /pwchange
-Disallow: /settings
-Disallow: /imageupload
+Disallow: /
 """,
             content_type="text/plain",
         )
