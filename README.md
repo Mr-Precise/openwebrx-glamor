@@ -3,6 +3,10 @@ OpenWebRX
 
 OpenWebRX is a multi-user SDR receiver software with a web interface.
 
+### Fork info:
+Bugs and problems from this fork should be reported [here](https://github.com/Mr-Precise/openwebrx-glamor/issues), not to the [original](https://github.com/jketterl/openwebrx) author!  
+This fork is mostly for cosmetic changes.  
+
 ![OpenWebRX](https://www.openwebrx.de/gfx/openwebrx-screenshot.png)
 
 It has the following features:
