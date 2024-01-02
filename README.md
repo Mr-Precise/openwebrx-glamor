@@ -7,7 +7,9 @@ OpenWebRX is a multi-user SDR receiver software with a web interface.
 Bugs and problems from this fork should be reported [here](https://github.com/Mr-Precise/openwebrx-glamor/issues), not to the [original](https://github.com/jketterl/openwebrx) author!  
 This fork is mostly for cosmetic changes.  
 
-![OpenWebRX](https://www.openwebrx.de/gfx/openwebrx-screenshot.png)
+![OpenWebRX](res/screen.png)
+Added transparency for ease of use with a small display:  
+![transparent](res/transparent.png)
 
 It has the following features:
 
@@ -28,24 +30,8 @@ It has the following features:
 
 ## Setup
 
-The following methods of setting up a receiver are currently available:
+To install the components and dependencies you can follow the [official wiki](https://github.com/jketterl/openwebrx/wiki/Setup-Guide) instructions, then you can build from this repository.
 
-- Raspberry Pi SD card images
-- Debian repository
-- Docker images
-- Manual installation
-
-Please checkout the [setup guide on the wiki](https://github.com/jketterl/openwebrx/wiki/Setup-Guide) for more details
-on the respective methods.
-
-## Community
-
-If you have trouble setting up or configuring your receiver, you have some great idea you want to see implemented, or
-you just generally want to have some OpenWebRX-related chat, come visit us over on
-[our groups.io group](https://groups.io/g/openwebrx).
-
-If you want to hang out, chat, or get in touch directly with the developers, receiver operators or users, feel free to
-drop by in [our Discord server](https://discord.gg/gnE9hPz).
 
 ## Usage tips
 
