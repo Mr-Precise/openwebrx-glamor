@@ -1335,3 +1335,45 @@ img.openwebrx-mirror-img
 .openwebrx-waterfall-container > * {
     flex: 0 0 auto;
 }
+
+#openwebrx-panel-metadata-wfm {
+	width: 300px;
+	max-height: 180px;
+}
+
+.rds-container {
+	width: 100%;
+	text-align: center;
+}
+
+.rds-container .rds-stationname {
+	font-family: roboto-mono;
+	font-size: 18pt;
+	padding: 10px 0;
+}
+
+.rds-container .rds-stationname,
+.rds-container .rds-identifier,
+.rds-container .rds-prog_type {
+	min-height: 1lh;
+}
+
+.rds-container .rds-radiotext-plus .rds-rtplus-item:not(:empty):before {
+	content: "♫ ";
+}
+
+.rds-container .rds-radiotext-plus .rds-rtplus-programme:not(:empty):before {
+	content: "📅 ";
+}
+
+.rds-container .rds-radiotext-plus .rds-rtplus-news:not(:empty):before {
+	content: "📰 ";
+}
+
+.rds-container .rds-radiotext-plus .rds-rtplus-weather:not(:empty):before {
+	content: "⛅ ";
+}
+
+.rds-container .rds-radiotext-plus .rds-rtplus-homepage:not(:empty):before {
+	content: "🔗 ";
+}
