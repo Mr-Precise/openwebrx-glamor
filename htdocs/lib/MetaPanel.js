@@ -10,10 +10,6 @@ MetaPanel.prototype.isSupported = function(data) {
     return this.modes.includes(data.protocol);
 };
 
-MetaPanel.prototype.isEnabled = function() {
-    return true;
-};
-
 MetaPanel.prototype.clear = function() {
     this.el.find(".openwebrx-meta-slot").removeClass("active").removeClass("sync");
 };
@@ -414,7 +410,8 @@ WfmMetaPanel.prototype.update = function(data) {
     if ('radiotext_plus' in data) {
         // prefer displaying radiotext plus over radiotext
         this.radiotext_plus = this.radiotext_plus || {
-            item_toggle: -1
+            item_toggle: -1,
+            news: []
         };
 
         var tags = {};
@@ -433,6 +430,15 @@ WfmMetaPanel.prototype.update = function(data) {
 
         if ('item.artist' in tags && 'item.title' in tags) {
             this.radiotext_plus.item = tags['item.artist'] + ' - ' + tags['item.title'];
+        } else {
+            var items = Object.entries(tags).filter(function (e) {
+                return e[0].startsWith("item.")
+            })
+            if (items.length) {
+                this.radiotext_plus.item = items.map(function (e) {
+                    return e[0].substr(5, 1).toUpperCase() + e[0].substr(6) + ': ' + e[1];
+                }).join('; ');
+            }
         }
 
         if ('programme.now' in tags) {
@@ -452,7 +458,14 @@ WfmMetaPanel.prototype.update = function(data) {
         }
 
         if ('info.news' in tags) {
-            this.radiotext_plus.news = tags['info.news'];
+            var n = tags['info.news'];
+            var i = this.radiotext_plus.news.indexOf(n);
+            if (i >= 0) {
+                this.radiotext_plus.news.splice(i, 1);
+            }
+            this.radiotext_plus.news.push(n);
+            // limit the number of items
+            this.radiotext_plus.news = this.radiotext_plus.news.slice(-5);
         }
 
         if ('info.weather' in tags) {
@@ -473,12 +486,19 @@ WfmMetaPanel.prototype.update = function(data) {
             $el.find('.rds-rtplus-item').empty();
         }
         $el.find('.rds-rtplus-programme').text(this.radiotext_plus.programme || '');
-        $el.find('.rds-rtplus-news').text(this.radiotext_plus.news || '');
+        $el.find('.rds-rtplus-news').empty().html(this.radiotext_plus.news.map(function(n){
+            return $('<li>').text(n);
+        }));
         $el.find('.rds-rtplus-weather').text(this.radiotext_plus.weather || '');
         if (this.radiotext_plus.homepage) {
-            $el.find('.rds-rtplus-homepage').html(
-                '<a href="' + this.radiotext_plus.homepage + '" target="_blank">' + this.radiotext_plus.homepage + '</a>'
-            );
+            var url = this.radiotext_plus.homepage;
+            // prefix with a protcol if not present. we'll assume https, should be generally available these days.
+            if (url.indexOf('://') < 0) url = 'https://' + url;
+            // avoid updating the link if not necessary since that would prevent the user from clicking it
+            if ($el.find('.rds-rtplus-homepage a').attr('href') !== url) {
+                var link = $('<a href="' + url + '" target="_blank"></a>').text(this.radiotext_plus.homepage);
+                $el.find('.rds-rtplus-homepage').html(link);
+            }
         }
     } else {
         $el.find('.rds-radiotext-plus .autoclear').empty();
@@ -497,7 +517,7 @@ WfmMetaPanel.prototype.setEnabled = function(enabled) {
     if (enabled === this.enabled) return;
     this.enabled = enabled;
     if (enabled) {
-        $(this.el).html(
+        $(this.el).removeClass('disabled').html(
             '<div class="rds-container">' +
                 '<div class="rds-identifier rds-autoclear"></div>' +
                 '<div class="rds-stationname rds-autoclear"></div>' +
@@ -505,7 +525,7 @@ WfmMetaPanel.prototype.setEnabled = function(enabled) {
                 '<div class="rds-radiotext-plus">' +
                     '<div class="rds-rtplus-programme rds-autoclear"></div>' +
                     '<div class="rds-rtplus-item rds-autoclear"></div>' +
-                    '<div class="rds-rtplus-news rds-autoclear"></div>' +
+                    '<ul class="rds-rtplus-news rds-autoclear"></ul>' +
                     '<div class="rds-rtplus-weather rds-autoclear"></div>' +
                     '<div class="rds-rtplus-homepage rds-autoclear"></div>' +
                 '</div>' +
@@ -514,12 +534,8 @@ WfmMetaPanel.prototype.setEnabled = function(enabled) {
             '</div>'
         );
     } else {
-        $(this.el).emtpy()
+        $(this.el).addClass('disabled').emtpy()
     }
-};
-
-WfmMetaPanel.prototype.isEnabled = function() {
-    return this.enabled;
 };
 
 WfmMetaPanel.prototype.clear = function() {
