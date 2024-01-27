@@ -550,6 +550,81 @@ WfmMetaPanel.prototype.clear = function() {
     this.radiotext_plus = false;
 };
 
+function DabMetaPanel(el) {
+    MetaPanel.call(this, el);
+    var me = this;
+    this.modes = ['DAB'];
+    this.service_id = 0;
+    this.$select = $('<select id="dab-service-id"></select>');
+    this.$select.on("change", function() {
+        me.service_id = parseInt($(this).val());
+        $('#openwebrx-panel-receiver').demodulatorPanel().getDemodulator().setDabServiceId(me.service_id);
+    });
+    var $container = $(
+        '<div class="dab-container">' +
+            '<div class="dab-auto-clear dab-ensemble-id"></div>' +
+            '<div class="dab-auto-clear dab-ensemble-label"></div>' +
+            '<div class="dab-auto-clear dab-timestamp"></div>' +
+            '<label for="dab-service-id">DAB Programme:</label>' +
+        '</div>'
+    );
+    $container.append(this.$select);
+    $(this.el).append($container);
+    this.clear();
+    this.programmeTimeout = false;
+}
+
+DabMetaPanel.prototype = new MetaPanel();
+
+DabMetaPanel.prototype.isSupported = function(data) {
+    return this.modes.includes(data.mode);
+}
+
+
+DabMetaPanel.prototype.update = function(data) {
+    if (!this.isSupported(data)) return;
+
+    if ('ensemble_id' in data) {
+        $(this.el).find('.dab-ensemble-id').text('0x' + data.ensemble_id.toString(16));
+    }
+
+    if ('ensemble_label' in data) {
+        $(this.el).find('.dab-ensemble-label').text(data.ensemble_label);
+    }
+
+    if ('timestamp' in data) {
+        var date = new Date(data.timestamp * 1000);
+        $(this.el).find('.dab-timestamp').text(date.toLocaleString([], {dateStyle: 'short', timeStyle: 'medium'}));
+    }
+
+    if ('programmes' in data) {
+        var options = Object.entries(data.programmes).map(function(e) {
+            return '<option value="' + e[0] + '">' + e[1] + '</option>';
+        });
+        this.$select.html(
+            options.join('') +
+            '<option value="" disabled selected hidden>Loading...</option>'
+        );
+
+        var me = this;
+        if (this.programmeTimeout) clearTimeout(this.programmeTimeout);
+        this.programmeTimeout = setTimeout(function() {
+            // user has selected a programme to play. don't interfere.
+            me.$select.val(this.service_id);
+            if (me.$select.val()) return;
+            me.$select.val(me.$select.find('option:first').val()).change();
+        }, 1000);
+    }
+}
+
+DabMetaPanel.prototype.clear = function() {
+    this.service_id = 0;
+    $(this.el).find('.dab-auto-clear').empty();
+    this.$select.html(
+        '<option value="" disabled selected hidden>Loading...</option>'
+    );
+}
+
 MetaPanel.types = {
     dmr: DmrMetaPanel,
     ysf: YsfMetaPanel,
@@ -557,6 +632,7 @@ MetaPanel.types = {
     nxdn: NxdnMetaPanel,
     m17: M17MetaPanel,
     wfm: WfmMetaPanel,
+    dab: DabMetaPanel,
 };
 
 $.fn.metaPanel = function() {
