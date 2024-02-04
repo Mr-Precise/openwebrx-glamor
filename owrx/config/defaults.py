@@ -175,4 +175,7 @@ defaultConfig = PropertyLayer(
     # pskreporter_antenna_information=None,
     wsprnet_enabled=False,
     wsprnet_callsign="N0CALL",
+    mqtt_enabled=False,
+    mqtt_host="localhost",
+    mqtt_use_ssl=False,
 ).readonly()
