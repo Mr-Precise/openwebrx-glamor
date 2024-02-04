@@ -90,7 +90,8 @@ class FeatureDetector(object):
         "dumphfdl": ["dumphfdl"],
         "dumpvdl2": ["dumpvdl2"],
         "redsea": ["redsea"],
-        "dab": ["csdreti", "dablin"]
+        "dab": ["csdreti", "dablin"],
+        "mqtt": ["paho_mqtt"],
     }
 
     def feature_availability(self):
@@ -194,7 +195,7 @@ class FeatureDetector(object):
         In addition, the [pycsdr](https://github.com/jketterl/pycsdr) package must be installed to provide
         python bindings for the csdr library.
         """
-        required_version = LooseVersion("0.18.0")
+        required_version = LooseVersion("0.19.0")
 
         try:
             from pycsdr.modules import csdr_version
@@ -522,9 +523,9 @@ class FeatureDetector(object):
 
     def has_freedv_rx(self):
         """
-        The "freedv\_rx" executable is required to demodulate FreeDV digital transmissions. It comes together with the
+        The "freedv\\_rx" executable is required to demodulate FreeDV digital transmissions. It comes together with the
         codec2 library, but it's only a supplemental part and not installed by default or contained in its packages.
-        To install it, you will need to compile codec2 from source and manually install freedv\_rx.
+        To install it, you will need to compile codec2 from source and manually install freedv\\_rx.
 
         Detailed installation instructions are available on the
         [OpenWebRX wiki](https://github.com/jketterl/openwebrx/wiki/FreeDV-demodulator-notes).
@@ -680,3 +681,10 @@ class FeatureDetector(object):
         Dablin comes packaged with Debian and Ubuntu, so installing the `dablin` package should get you going.
         """
         return self.command_is_runnable("dablin -h")
+
+    def has_paho_mqtt(self):
+        try:
+            from paho.mqtt import __version__
+            return True
+        except ImportError:
+            return False
